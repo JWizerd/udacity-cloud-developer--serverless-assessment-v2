@@ -13,7 +13,7 @@ export default class TodoAccess {
       ExpressionAttributeValues: {
         ':userId': userId
       },
-      IndexName: process.env.TODO_GLOBAL_SECONDARY_INDEX_NAME,
+      IndexName: process.env.TODO_LOCAL_SECONDARY_INDEX_NAME,
       KeyConditionExpression: 'userId = :userId',
       TableName: this.table
     };
@@ -48,15 +48,17 @@ export default class TodoAccess {
     await this.client.update({
       TableName: this.table,
       Key: {
-        todoId: todoId,
-        userId: userId,
+        todoId,
+        userId,
       },
-      UpdateExpression: "set info.name=:a, info.dueDate=:b, info.done=:c, info.attachmentUrl=:d",
+      UpdateExpression: "set #n = :a, dueDate = :b, done = :c",
+      ExpressionAttributeNames: {
+        "#n": "name"
+      },
       ExpressionAttributeValues: {
         ":a": todoItem.name,
         ":b": todoItem.dueDate,
-        ":c": todoItem.done,
-        ":d": todoItem.attachmentUrl
+        ":c": todoItem.done
       },
       ReturnValues: "ALL_NEW"
     }).promise();
