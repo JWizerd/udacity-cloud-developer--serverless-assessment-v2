@@ -177,7 +177,7 @@ resources:
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
-        LocalSecondaryIndexes:
+        GlobalSecondaryIndex:
           - IndexName: ${self:provider.environment.TODO_GLOBAL_SECONDARY_INDEX_NAME}
             KeySchema:
             - AttributeName: userId

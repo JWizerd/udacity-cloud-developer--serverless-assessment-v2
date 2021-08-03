@@ -21,15 +21,7 @@ export const createTodo = async (todoItem: CreateTodoRequest, userId: string): P
 }
 
 export const updateTodo = async (todoId: string, todoItem: UpdateTodoRequest, userId: string): Promise<TodoItem> => {
-  const requestMergedWithDefaults = {
-    todoId: uuid.v4(),
-    createdAt: new Date().toISOString(),
-    done: false,
-    userId,
-    ...todoItem,
-  } as TodoItem;
-
-  const updated = await todoAccess.update(todoId, requestMergedWithDefaults, userId);
+  const updated = await todoAccess.update(todoId, todoItem as TodoItem, userId);
 
   return updated;
 }
@@ -41,5 +33,6 @@ export const deleteTodo = async (todoId: string, userId: string): Promise<string
 
 export const getTodosForUser = async (userId: string): Promise<TodoItem[]> => {
   const items = await todoAccess.findAll(userId);
+
   return items as TodoItem[];
 }
