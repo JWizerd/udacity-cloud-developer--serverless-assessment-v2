@@ -42,8 +42,8 @@ provider:
     lambda: true
 
   environment:
-    TODOS_TABLE: 'Todos-Table-${self:provider.stage}'
-    TODO_GLOBAL_SECONDARY_INDEX_NAME: 'userid_created_at_index'
+    TODOS_TABLE: 'Todos-Tbl-${self:provider.stage}'
+    TODO_LOCAL_SECONDARY_INDEX_NAME: 'userid_created_at_index'
     TODO_ATTACHMENTS_S3_BUCKET: 'todo-attachments-bucket-${self:provider.stage}'
 
 functions:
@@ -64,7 +64,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODO_GLOBAL_SECONDARY_INDEX_NAME}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODO_LOCAL_SECONDARY_INDEX_NAME}
     events:
       - http:
           method: get
@@ -177,8 +177,8 @@ resources:
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
-        GlobalSecondaryIndex:
-          - IndexName: ${self:provider.environment.TODO_GLOBAL_SECONDARY_INDEX_NAME}
+        LocalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.TODO_LOCAL_SECONDARY_INDEX_NAME}
             KeySchema:
             - AttributeName: userId
               KeyType: HASH

@@ -22,7 +22,6 @@ export const createTodo = async (todoItem: CreateTodoRequest, userId: string): P
 
 export const updateTodo = async (todoId: string, todoItem: UpdateTodoRequest, userId: string): Promise<TodoItem> => {
   const updated = await todoAccess.update(todoId, todoItem as TodoItem, userId);
-
   return updated;
 }
 

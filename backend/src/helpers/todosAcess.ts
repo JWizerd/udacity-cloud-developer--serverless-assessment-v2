@@ -13,7 +13,7 @@ export default class TodoAccess {
       ExpressionAttributeValues: {
         ':userId': userId
       },
-      IndexName: process.env.TODO_GLOBAL_SECONDARY_INDEX_NAME,
+      IndexName: process.env.TODO_LOCAL_SECONDARY_INDEX_NAME,
       KeyConditionExpression: 'userId = :userId',
       TableName: this.table
     };
@@ -21,20 +21,6 @@ export default class TodoAccess {
     const result = await this.client.query(params).promise();
 
     return result.Items as TodoItem[];
-  }
-
-  async findOne(userId: string, todoId: string): Promise<TodoItem> {
-    var params: DocumentClient.GetItemInput = {
-      Key: {
-        todoId,
-        userId
-      },
-      TableName: this.table
-    };
-
-    const result = await this.client.get(params).promise();
-
-    return result.Item as TodoItem;
   }
 
   async create(todoItem: TodoItem): Promise<TodoItem> {
@@ -59,27 +45,20 @@ export default class TodoAccess {
   }
 
   async update(todoId: string, todoItem: TodoItem, userId: string): Promise<TodoItem> {
-    const existingTodo = await this.findOne(userId, todoId);
-
-    const mergedAttributes = {
-      ...existingTodo,
-      ...todoItem
-    };
-
     await this.client.update({
       TableName: this.table,
       Key: {
-        todoId: todoId,
-        userId: userId,
+        todoId,
+        userId,
       },
-      UpdateExpression: "set todo.#n= :a , todo.dueDate= :b , todo.done= :c",
+      UpdateExpression: "set #n = :a, dueDate = :b, done = :c",
       ExpressionAttributeNames: {
         "#n": "name"
       },
       ExpressionAttributeValues: {
-        ":a": mergedAttributes.name,
-        ":b": mergedAttributes.dueDate,
-        ":c": mergedAttributes.done
+        ":a": todoItem.name,
+        ":b": todoItem.dueDate,
+        ":c": todoItem.done
       },
       ReturnValues: "ALL_NEW"
     }).promise();
