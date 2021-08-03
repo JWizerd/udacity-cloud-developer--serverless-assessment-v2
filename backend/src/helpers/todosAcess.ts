@@ -51,12 +51,14 @@ export default class TodoAccess {
         todoId: todoId,
         userId: userId,
       },
-      UpdateExpression: "set info.name=:a, info.dueDate=:b, info.done=:c, info.attachmentUrl=:d",
+      UpdateExpression: "set info.#n=:a, info.dueDate=:b, info.done=:c",
+      ExpressionAttributeNames: {
+        "#n": "name"
+      },
       ExpressionAttributeValues: {
         ":a": todoItem.name,
         ":b": todoItem.dueDate,
-        ":c": todoItem.done,
-        ":d": todoItem.attachmentUrl
+        ":c": todoItem.done
       },
       ReturnValues: "ALL_NEW"
     }).promise();
