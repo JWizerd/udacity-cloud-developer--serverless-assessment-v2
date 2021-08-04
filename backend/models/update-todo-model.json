@@ -4,13 +4,16 @@
   "type": "object",
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "minLength": 2
     },
     "dueDate": {
-      "type": "string"
+      "type": "string",
+      "minLength": 2
     },
     "done": {
-      "type": "boolean"
+      "type": "boolean",
+      "minLength": 1
     }
   },
   "required": [
@@ -18,5 +21,5 @@
     "dueDate",
     "done"
   ],
-  "additionalProperties": false
+  "additionalProperties": true
 }

@@ -38,6 +38,6 @@ export const getTodosForUser = async (userId: string): Promise<TodoItem[]> => {
 }
 
 export const getTodo = async (userId: string, todoId: string): Promise<TodoItem> => {
-  const items = await todoAccess.findOne(userId, todoId);
-  return items as TodoItem;
+  const item = await todoAccess.findOne(todoId, userId);
+  return item as TodoItem;
 }
