@@ -1,7 +1,9 @@
 import * as React from 'react'
 import { Form, Button } from 'semantic-ui-react'
 import Auth from '../auth/Auth'
-import { getUploadUrl, uploadFile } from '../api/todos-api'
+import { getTodo, getUploadUrl, patchTodo, uploadFile } from '../api/todos-api'
+import { Todo } from '../types/Todo'
+import { UpdateTodoRequest } from '../types/UpdateTodoRequest'
 
 enum UploadState {
   NoUpload,
@@ -14,13 +16,14 @@ interface EditTodoProps {
     params: {
       todoId: string
     }
-  }
+  },
   auth: Auth
 }
 
 interface EditTodoState {
   file: any
   uploadState: UploadState
+  todo: Todo | undefined
 }
 
 export class EditTodo extends React.PureComponent<
@@ -29,7 +32,12 @@ export class EditTodo extends React.PureComponent<
 > {
   state: EditTodoState = {
     file: undefined,
-    uploadState: UploadState.NoUpload
+    uploadState: UploadState.NoUpload,
+    todo: undefined
+  }
+
+  async componentDidMount() {
+    this.state.todo = await getTodo(this.props.auth.getIdToken(), this.props.match.params.todoId);
   }
 
   handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,9 +60,13 @@ export class EditTodo extends React.PureComponent<
 
       this.setUploadState(UploadState.FetchingPresignedUrl)
       const uploadUrl = await getUploadUrl(this.props.auth.getIdToken(), this.props.match.params.todoId)
+      const attachmentUrl = uploadUrl ? uploadUrl.split("?")[0] : "";
 
       this.setUploadState(UploadState.UploadingFile)
       await uploadFile(uploadUrl, this.state.file)
+
+      const updatedTodo = { ...this.state.todo, attachmentUrl } as UpdateTodoRequest;
+      await patchTodo(this.props.auth.getIdToken(), this.props.match.params.todoId, updatedTodo)
 
       alert('File was uploaded!')
     } catch (e) {
