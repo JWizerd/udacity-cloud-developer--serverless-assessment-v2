@@ -44,6 +44,18 @@ export default class TodoAccess {
     return todoId;
   }
 
+  async findOne(todoId: string, userId: string): Promise<TodoItem> {
+    const todo = await this.client.get({
+      TableName: this.table,
+      Key: {
+        todoId,
+        userId
+      }
+    }).promise();
+
+    return todo.Item as TodoItem;
+  }
+
   async update(todoId: string, todoItem: TodoItem, userId: string): Promise<TodoItem> {
     await this.client.update({
       TableName: this.table,
@@ -51,14 +63,15 @@ export default class TodoAccess {
         todoId,
         userId,
       },
-      UpdateExpression: "set #n = :a, dueDate = :b, done = :c",
+      UpdateExpression: "set #n = :a, dueDate = :b, done = :c, attachmentUrl = :d",
       ExpressionAttributeNames: {
         "#n": "name"
       },
       ExpressionAttributeValues: {
         ":a": todoItem.name,
         ":b": todoItem.dueDate,
-        ":c": todoItem.done
+        ":c": todoItem.done,
+        ":d": todoItem.attachmentUrl
       },
       ReturnValues: "ALL_NEW"
     }).promise();

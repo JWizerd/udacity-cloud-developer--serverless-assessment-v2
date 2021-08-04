@@ -23,6 +23,7 @@
     "@types/uuid": "^8.3.1",
     "aws-sdk": "^2.433.0",
     "jest": "^27.0.6",
+    "serverless": "^1.50.0",
     "serverless-aws-documentation": "^1.1.0",
     "serverless-iam-roles-per-function": "^3.2.0-e97ab49",
     "serverless-plugin-canary-deployments": "^0.4.7",

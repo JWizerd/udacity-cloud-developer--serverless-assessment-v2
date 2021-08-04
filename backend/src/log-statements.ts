@@ -44,5 +44,10 @@ export default {
     name: "find all todos",
     success: "fetching list of todos",
     error: "could not return list of todos"
+  },
+  findOne: {
+    name: "find todo",
+    success: "fetching todo",
+    error: "could not locate todo"
   }
 }
