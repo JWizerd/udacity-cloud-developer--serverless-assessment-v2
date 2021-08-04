@@ -11,6 +11,7 @@ export const createTodo = async (todoItem: CreateTodoRequest, userId: string): P
     todoId: uuid.v4(),
     createdAt: new Date().toISOString(),
     done: false,
+    attachmentUrl: "",
     userId,
     ...todoItem,
   } as TodoItem;
@@ -34,4 +35,9 @@ export const getTodosForUser = async (userId: string): Promise<TodoItem[]> => {
   const items = await todoAccess.findAll(userId);
 
   return items as TodoItem[];
+}
+
+export const getTodo = async (userId: string, todoId: string): Promise<TodoItem> => {
+  const items = await todoAccess.findOne(userId, todoId);
+  return items as TodoItem;
 }
